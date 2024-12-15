@@ -5,6 +5,16 @@ terraform {
       version = "~>5.64.0"
     }
   }
+
+  cloud {
+
+    organization = "FIAP-Lanchonete-G41"
+
+    workspaces {
+      name = "lambda-authorizer"
+    }
+  }
+
 }
 
 provider "aws" {

@@ -9,7 +9,7 @@ resource "aws_lambda_function" "authorizer" {
   runtime       = "nodejs20.x"
   filename      = "lambda.zip"
   publish       = true
-  
+
   environment {
     variables = {
       USER_POOL_ID = "us-east-1_examplePoolId"
