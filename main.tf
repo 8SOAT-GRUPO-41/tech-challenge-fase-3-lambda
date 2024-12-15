@@ -11,10 +11,10 @@ resource "aws_lambda_function" "authorizer" {
   publish          = true
   source_code_hash = filebase64sha256("lambda_function.zip")
 
+  timeout = 15
+
   environment {
     variables = {
-      USER_POOL_ID = "us-east-1_examplePoolId"
-      REGION       = "us-east-1"
     }
   }
 }
