@@ -1,0 +1,12 @@
+service: lambda-authorizer
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+
+functions:
+  authorizer:
+    handler: src/index.handler
+
+plugins:
+  - serverless-offline

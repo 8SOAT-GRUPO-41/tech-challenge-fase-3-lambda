@@ -1,0 +1,17 @@
+{
+  "name": "tech-challenge-fase-3-lambda-authorizer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {},
+  "devDependencies": {
+    "serverless-offline": "^14.4.0"
+  }
+}

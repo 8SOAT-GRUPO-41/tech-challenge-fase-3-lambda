@@ -1,0 +1,8 @@
+{
+    "type": "REQUEST",
+    "methodArn": "arn:aws:execute-api:us-east-1:123456789012:abcdefghij/dev/GET/",
+    "headers": {
+        "Authorization": "Bearer eyJraWQiOiJr..."
+    },
+    "authorizationToken": "Bearer eyJraWQiOiJr..."
+}
