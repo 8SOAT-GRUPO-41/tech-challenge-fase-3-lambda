@@ -1,25 +1,29 @@
 const generatePolicy = (principalId, effect, resource) => {
-    const authResponse = {};
-    authResponse.principalId = principalId;
-    if (effect && resource) {
-        const policyDocument = {};
-        policyDocument.Version = '2012-10-17';
-        policyDocument.Statement = [];
-        const statementOne = {};
-        statementOne.Action = 'execute-api:Invoke';
-        statementOne.Effect = effect;
-        statementOne.Resource = resource;
-        policyDocument.Statement[0] = statementOne;
-        authResponse.policyDocument = policyDocument;
+    if (!effect || !resource) {
+        return { principalId };
     }
-    return authResponse;
-}
+    return {
+        principalId,
+        policyDocument: {
+            Version: '2012-10-17',
+            Statement: [
+                {
+                    Action: 'execute-api:Invoke',
+                    Effect: effect,
+                    Resource: resource,
+                },
+            ],
+        },
+    };
+};
 
 module.exports.handler = (event, context, callback) => {
-    const token = event.authorizationToken;
-    if (token === 'allow') {
-        callback(null, generatePolicy('user', 'Allow', event.methodArn));
+    const { authorizationToken, methodArn } = event;
+
+    if (authorizationToken === 'allow') {
+        const policy = generatePolicy('user', 'Allow', methodArn);
+        callback(null, policy);
     } else {
         callback('Unauthorized');
     }
-}
+};
