@@ -7,7 +7,7 @@ resource "aws_lambda_function" "authorizer" {
   role          = data.aws_iam_role.lab_role.arn
   handler       = "src/index.handler"
   runtime       = "nodejs20.x"
-  filename      = "lambda.zip"
+  filename      = "lambda_function.zip"
   publish       = true
 
   environment {
