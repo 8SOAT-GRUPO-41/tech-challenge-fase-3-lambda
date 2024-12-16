@@ -1,8 +1,44 @@
 {
+    "version": "2.0",
     "type": "REQUEST",
-    "routeArn": "arn:aws:execute-api:us-east-1:123456789012:abcdefghij/dev/GET/",
+    "routeArn": "arn:aws:execute-api:us-east-1:721525683170:yvq96tymqj/$default/GET/",
+    "identitySource": [
+        "allow"
+    ],
+    "routeKey": "GET /",
+    "rawPath": "/",
+    "rawQueryString": "",
     "headers": {
-        "Authorization": "Bearer eyJraWQiOiJr..."
+        "accept": "*/*",
+        "accept-encoding": "gzip, deflate, br",
+        "authorization": "allow",
+        "cache-control": "no-cache",
+        "content-length": "0",
+        "host": "yvq96tymqj.execute-api.us-east-1.amazonaws.com",
+        "postman-token": "897f77fc-5e7d-4101-9355-fd1cecdf96af",
+        "user-agent": "PostmanRuntime/7.43.0",
+        "x-amzn-trace-id": "Root=1-675f783f-6f5b1e261b4a144d07ea9228",
+        "x-customer-document": "12131",
+        "x-forwarded-for": "187.89.56.111",
+        "x-forwarded-port": "443",
+        "x-forwarded-proto": "https"
     },
-    "authorizationToken": "Bearer eyJraWQiOiJr..."
+    "requestContext": {
+        "accountId": "721525683170",
+        "apiId": "yvq96tymqj",
+        "domainName": "yvq96tymqj.execute-api.us-east-1.amazonaws.com",
+        "domainPrefix": "yvq96tymqj",
+        "http": {
+            "method": "GET",
+            "path": "/",
+            "protocol": "HTTP/1.1",
+            "sourceIp": "187.89.56.111",
+            "userAgent": "PostmanRuntime/7.43.0"
+        },
+        "requestId": "C2-6BhiZIAMEPkA=",
+        "routeKey": "GET /",
+        "stage": "$default",
+        "time": "16/Dec/2024:00:45:51 +0000",
+        "timeEpoch": 1734309951784
+    }
 }
