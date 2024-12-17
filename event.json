@@ -11,7 +11,7 @@
     "headers": {
         "accept": "*/*",
         "accept-encoding": "gzip, deflate, br",
-        "authorization": "allow",
+        "authorization": "Bearer ey...",
         "cache-control": "no-cache",
         "content-length": "0",
         "host": "yvq96tymqj.execute-api.us-east-1.amazonaws.com",

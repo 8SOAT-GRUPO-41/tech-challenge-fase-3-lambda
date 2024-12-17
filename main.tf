@@ -52,6 +52,7 @@ resource "aws_lambda_function" "authorizer" {
 
   environment {
     variables = {
+      COGNITO_USER_POOL_ID = "us-east-1_sICcoizFw"
     }
   }
 }
@@ -76,7 +77,7 @@ resource "aws_apigatewayv2_authorizer" "lambda_authorizer" {
 ############################################
 resource "aws_apigatewayv2_route" "eks_route_with_auth" {
   api_id             = data.aws_apigatewayv2_api.api_gateway.id
-  route_key          = "ANY /{proxy+}"
+  route_key          = "ANY /admin/{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.eks_integration.id}"
   authorization_type = "CUSTOM"
   authorizer_id      = aws_apigatewayv2_authorizer.lambda_authorizer.id

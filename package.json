@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "serverless offline start",
+    "invoke:local": "serverless invoke local --function authorizer --path event.json"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {},
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0"
+  },
   "devDependencies": {
     "serverless-offline": "^14.4.0"
   }

@@ -1,0 +1,126 @@
+{
+  "/Users/rafaelcavalcante/swe/8SOAT/tech-challenge-fase-3-lambda": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.16",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeResolverProviders": {
+      "default-aws-credential-resolver": "<REDACTED>",
+      "sls": {
+        "instance": {
+          "credentials": "<REDACTED>",
+          "serviceConfigFile": {
+            "service": "lambda-authorizer",
+            "provider": {
+              "name": "aws",
+              "runtime": "nodejs20.x",
+              "stage": "dev",
+              "region": "us-east-1",
+              "versionFunctions": true,
+              "environment": {
+                "IS_LOCAL": "true"
+              }
+            },
+            "functions": {
+              "authorizer": {
+                "handler": "src/index.handler",
+                "events": [],
+                "name": "lambda-authorizer-dev-authorizer"
+              }
+            },
+            "plugins": [
+              "serverless-offline"
+            ]
+          },
+          "configFileDirPath": "/Users/rafaelcavalcante/swe/8SOAT/tech-challenge-fase-3-lambda",
+          "config": {
+            "type": "sls"
+          },
+          "options": {
+            "function": "authorizer",
+            "path": "event.json"
+          },
+          "stage": "dev",
+          "dashboard": null,
+          "logger": {
+            "namespace": "s:core:resolver:sls",
+            "prefix": null,
+            "prefixColor": null
+          },
+          "_credentialsPromise": "<REDACTED>"
+        },
+        "resolvers": {}
+      }
+    },
+    "composeServiceName": null,
+    "servicePath": "/Users/rafaelcavalcante/swe/8SOAT/tech-challenge-fase-3-lambda",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "lambda-authorizer",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs20.x",
+        "stage": "dev",
+        "region": "us-east-1",
+        "versionFunctions": true,
+        "environment": {
+          "IS_LOCAL": "true"
+        }
+      },
+      "functions": {
+        "authorizer": {
+          "handler": "src/index.handler",
+          "events": [],
+          "name": "lambda-authorizer-dev-authorizer"
+        }
+      },
+      "plugins": [
+        "serverless-offline"
+      ]
+    },
+    "serviceRawFile": "service: lambda-authorizer\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n\nfunctions:\n  authorizer:\n    handler: src/index.handler\n\nplugins:\n  - serverless-offline\n",
+    "command": [
+      "invoke",
+      "local"
+    ],
+    "options": {
+      "function": "authorizer",
+      "path": "event.json"
+    },
+    "error": null,
+    "params": {},
+    "machineId": "06c9c11593e85bb97a7d147ad205b748",
+    "stage": "dev",
+    "accessKeyV2": "<REDACTED>",
+    "accessKeyV1": "<REDACTED>",
+    "orgId": "0cdd058b-c1cc-4f0f-af26-97960703b8af",
+    "orgName": "yeeeorg",
+    "userId": "Wm6hzmK9dC10cqthlz",
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "userName": "yeeeorg",
+    "subscription": null,
+    "userEmail": "rvmascavalcante@gmail.com",
+    "serviceProviderAwsRegion": "us-east-1",
+    "serviceProviderAwsCredentials": "<REDACTED>",
+    "serviceProviderAwsAccountId": "721525683170",
+    "projectType": "traditional",
+    "versionSf": "4.4.16",
+    "serviceProviderAwsCfStackName": "lambda-authorizer-dev",
+    "integrations": {},
+    "serviceUniqueId": null,
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}
