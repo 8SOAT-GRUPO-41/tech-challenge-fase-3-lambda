@@ -67,6 +67,7 @@ resource "aws_apigatewayv2_authorizer" "lambda_authorizer" {
   authorizer_uri                    = aws_lambda_function.authorizer.invoke_arn
   identity_sources                  = ["$request.header.Authorization"]
   authorizer_payload_format_version = "2.0"
+  enable_simple_responses           = true
 }
 
 
