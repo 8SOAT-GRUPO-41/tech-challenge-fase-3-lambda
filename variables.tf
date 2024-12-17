@@ -12,3 +12,8 @@ variable "vpc_link_id" {
   description = "The ID of the VPC Link"
   type        = string
 }
+
+variable "cognito_user_pool_id" {
+  description = "The ID of the Cognito User Pool"
+  type        = string
+}

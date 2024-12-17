@@ -52,7 +52,7 @@ resource "aws_lambda_function" "authorizer" {
 
   environment {
     variables = {
-      COGNITO_USER_POOL_ID = "us-east-1_sICcoizFw"
+      COGNITO_USER_POOL_ID = var.cognito_user_pool_id
     }
   }
 }
