@@ -16,10 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Package Lambda
+      - name: Install and Package Lambda with Prod Dependencies
         run: |
-          zip -r lambda_function.zip src/index.js
-      
+          chmod +x ./package_lambda.sh
+          ./package_lambda.sh
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
