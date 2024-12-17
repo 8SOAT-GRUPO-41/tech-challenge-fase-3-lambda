@@ -1,3 +1,7 @@
+############################################
+# Data Sources
+############################################
+
 data "aws_iam_role" "lab_role" {
   name = "LabRole"
 }
@@ -5,6 +9,10 @@ data "aws_iam_role" "lab_role" {
 data "aws_apigatewayv2_api" "api_gateway" {
   api_id = var.api_gateway_id
 }
+
+############################################
+# Lambda Function
+############################################
 
 resource "aws_lambda_function" "authorizer" {
   function_name    = "cognito-authorizer"
@@ -23,6 +31,10 @@ resource "aws_lambda_function" "authorizer" {
   }
 }
 
+############################################
+# API Gateway Resources
+############################################
+
 resource "aws_apigatewayv2_authorizer" "lambda_authorizer" {
   name                              = "lambda-authorizer"
   api_id                            = data.aws_apigatewayv2_api.api_gateway.id
@@ -30,4 +42,13 @@ resource "aws_apigatewayv2_authorizer" "lambda_authorizer" {
   authorizer_uri                    = aws_lambda_function.authorizer.invoke_arn
   identity_sources                  = ["$request.header.Authorization"]
   authorizer_payload_format_version = "2.0"
+}
+
+
+resource "aws_apigatewayv2_route" "eks_route_with_auth" {
+  api_id             = data.aws_apigatewayv2_api.api_gateway.id
+  route_key          = "ANY /{proxy+}"
+  target             = "integrations/${aws_apigatewayv2_integration.eks_integration.id}"
+  authorization_type = "CUSTOM"
+  authorizer_id      = aws_apigatewayv2_authorizer.lambda_authorizer.id
 }
