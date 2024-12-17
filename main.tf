@@ -1,3 +1,7 @@
+############################################
+# Data Sources
+############################################
+
 data "aws_iam_role" "lab_role" {
   name = "LabRole"
 }
@@ -5,6 +9,35 @@ data "aws_iam_role" "lab_role" {
 data "aws_apigatewayv2_api" "api_gateway" {
   api_id = var.api_gateway_id
 }
+
+data "aws_lb" "eks_nlb" {
+  name = var.eks_nlb_name
+}
+
+data "aws_lb_listener" "eks_listener" {
+  load_balancer_arn = data.aws_lb.eks_nlb.arn
+  port              = 80
+}
+
+data "aws_apigatewayv2_vpc_link" "vpc_link" {
+  vpc_link_id = var.vpc_link_id
+}
+
+############################################
+# Create API Gateway Integration
+############################################
+resource "aws_apigatewayv2_integration" "eks_integration" {
+  api_id             = data.aws_apigatewayv2_api.api_gateway.id
+  integration_type   = "HTTP_PROXY"
+  integration_uri    = data.aws_lb_listener.eks_listener.arn
+  connection_type    = "VPC_LINK"
+  connection_id      = data.aws_apigatewayv2_vpc_link.vpc_link.id
+  integration_method = "ANY"
+}
+
+############################################
+# Lambda Function
+############################################
 
 resource "aws_lambda_function" "authorizer" {
   function_name    = "cognito-authorizer"
@@ -23,6 +56,10 @@ resource "aws_lambda_function" "authorizer" {
   }
 }
 
+############################################
+# API Gateway Resources
+############################################
+
 resource "aws_apigatewayv2_authorizer" "lambda_authorizer" {
   name                              = "lambda-authorizer"
   api_id                            = data.aws_apigatewayv2_api.api_gateway.id
@@ -30,4 +67,22 @@ resource "aws_apigatewayv2_authorizer" "lambda_authorizer" {
   authorizer_uri                    = aws_lambda_function.authorizer.invoke_arn
   identity_sources                  = ["$request.header.Authorization"]
   authorizer_payload_format_version = "2.0"
+}
+
+
+############################################
+# API Gateway Routes
+############################################
+resource "aws_apigatewayv2_route" "eks_route_with_auth" {
+  api_id             = data.aws_apigatewayv2_api.api_gateway.id
+  route_key          = "ANY /{proxy+}"
+  target             = "integrations/${aws_apigatewayv2_integration.eks_integration.id}"
+  authorization_type = "CUSTOM"
+  authorizer_id      = aws_apigatewayv2_authorizer.lambda_authorizer.id
+}
+
+resource "aws_apigatewayv2_route" "docs_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "GET /docs"
+  target    = "integrations/${aws_apigatewayv2_integration.eks_integration.id}"
 }
