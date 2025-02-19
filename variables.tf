@@ -3,8 +3,13 @@ variable "api_gateway_id" {
   type        = string
 }
 
-variable "eks_nlb_name" {
-  description = "Name tag for the EKS Network Load Balancer"
+variable "payments_nlb_name" {
+  description = "Name tag for the EKS Network Load Balancer (NLB) for /payments"
+  type        = string
+}
+
+variable "customers_nlb_name" {
+  description = "Name tag for the EKS Network Load Balancer (NLB) for /customers"
   type        = string
 }
 
