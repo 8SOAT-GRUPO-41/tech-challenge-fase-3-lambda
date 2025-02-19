@@ -13,6 +13,11 @@ variable "customers_nlb_name" {
   type        = string
 }
 
+variable "products_nlb_name" {
+  description = "Name tag for the EKS Network Load Balancer (NLB) for /products"
+  type        = string
+}
+
 variable "vpc_link_id" {
   description = "The ID of the VPC Link"
   type        = string
