@@ -48,6 +48,19 @@ data "aws_lb_listener" "customers_listener" {
 }
 
 ############################################
+# NLB and Listener Data Sources for /orders
+############################################
+
+data "aws_lb" "orders_nlb" {
+  name = var.orders_nlb_name
+}
+
+data "aws_lb_listener" "orders_listener" {
+  load_balancer_arn = data.aws_lb.orders_nlb.arn
+  port              = 80
+}
+
+############################################
 # VPC Link Data Source
 ############################################
 
@@ -86,6 +99,14 @@ resource "aws_apigatewayv2_integration" "products_integration" {
   integration_method = "ANY"
 }
 
+resource "aws_apigatewayv2_integration" "orders_integration" {
+  api_id             = data.aws_apigatewayv2_api.api_gateway.id
+  integration_type   = "HTTP_PROXY"
+  integration_uri    = data.aws_lb_listener.orders_listener.arn
+  connection_type    = "VPC_LINK"
+  connection_id      = data.aws_apigatewayv2_vpc_link.vpc_link.id
+  integration_method = "ANY"
+}
 
 ############################################
 # Lambda Function
@@ -197,4 +218,25 @@ resource "aws_apigatewayv2_route" "payments_docs_route" {
   api_id    = data.aws_apigatewayv2_api.api_gateway.id
   route_key = "ANY /payments-docs"
   target    = "integrations/${aws_apigatewayv2_integration.payments_integration.id}"
+}
+
+############################################
+# ORDERS ROUTES
+############################################
+resource "aws_apigatewayv2_route" "orders_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /orders/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.orders_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "orders_root_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /orders"
+  target    = "integrations/${aws_apigatewayv2_integration.orders_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "orders_docs_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /orders-docs"
+  target    = "integrations/${aws_apigatewayv2_integration.orders_integration.id}"
 }
