@@ -10,14 +10,34 @@ data "aws_apigatewayv2_api" "api_gateway" {
   api_id = var.api_gateway_id
 }
 
-data "aws_lb" "eks_nlb" {
-  name = var.eks_nlb_name
+############################################
+# NLB and Listener Data Sources for /payments
+############################################
+data "aws_lb" "payments_nlb" {
+  name = var.payments_nlb_name
 }
 
-data "aws_lb_listener" "eks_listener" {
-  load_balancer_arn = data.aws_lb.eks_nlb.arn
+data "aws_lb_listener" "payments_listener" {
+  load_balancer_arn = data.aws_lb.payments_nlb.arn
   port              = 80
 }
+
+############################################
+# NLB and Listener Data Sources for /customers
+############################################
+
+data "aws_lb" "customers_nlb" {
+  name = var.customers_nlb_name
+}
+
+data "aws_lb_listener" "customers_listener" {
+  load_balancer_arn = data.aws_lb.customers_nlb.arn
+  port              = 80
+}
+
+############################################
+# VPC Link Data Source
+############################################
 
 data "aws_apigatewayv2_vpc_link" "vpc_link" {
   vpc_link_id = var.vpc_link_id
@@ -26,14 +46,25 @@ data "aws_apigatewayv2_vpc_link" "vpc_link" {
 ############################################
 # Create API Gateway Integration
 ############################################
-resource "aws_apigatewayv2_integration" "eks_integration" {
+
+resource "aws_apigatewayv2_integration" "payments_integration" {
   api_id             = data.aws_apigatewayv2_api.api_gateway.id
   integration_type   = "HTTP_PROXY"
-  integration_uri    = data.aws_lb_listener.eks_listener.arn
+  integration_uri    = data.aws_lb_listener.payments_listener.arn
   connection_type    = "VPC_LINK"
   connection_id      = data.aws_apigatewayv2_vpc_link.vpc_link.id
   integration_method = "ANY"
 }
+
+resource "aws_apigatewayv2_integration" "customers_integration" {
+  api_id             = data.aws_apigatewayv2_api.api_gateway.id
+  integration_type   = "HTTP_PROXY"
+  integration_uri    = data.aws_lb_listener.customers_listener.arn
+  connection_type    = "VPC_LINK"
+  connection_id      = data.aws_apigatewayv2_vpc_link.vpc_link.id
+  integration_method = "ANY"
+}
+
 
 ############################################
 # Lambda Function
@@ -75,16 +106,28 @@ resource "aws_apigatewayv2_authorizer" "lambda_authorizer" {
 ############################################
 # API Gateway Routes
 ############################################
-resource "aws_apigatewayv2_route" "eks_route_with_auth" {
-  api_id             = data.aws_apigatewayv2_api.api_gateway.id
-  route_key          = "ANY /admin/{proxy+}"
-  target             = "integrations/${aws_apigatewayv2_integration.eks_integration.id}"
-  authorization_type = "CUSTOM"
-  authorizer_id      = aws_apigatewayv2_authorizer.lambda_authorizer.id
+# resource "aws_apigatewayv2_route" "eks_route_with_auth" {
+#   api_id             = data.aws_apigatewayv2_api.api_gateway.id
+#   route_key          = "ANY /admin/{proxy+}"
+#   target             = "integrations/${aws_apigatewayv2_integration.eks_integration.id}"
+#   authorization_type = "CUSTOM"
+#   authorizer_id      = aws_apigatewayv2_authorizer.lambda_authorizer.id
+# }
+
+# resource "aws_apigatewayv2_route" "docs_proxy_route" {
+#   api_id    = data.aws_apigatewayv2_api.api_gateway.id
+#   route_key = "ANY /{proxy+}"
+#   target    = "integrations/${aws_apigatewayv2_integration.eks_integration.id}"
+# }
+
+resource "aws_apigatewayv2_route" "payments_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /payments/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.payments_integration.id}"
 }
 
-resource "aws_apigatewayv2_route" "docs_proxy_route" {
+resource "aws_apigatewayv2_route" "customers_route" {
   api_id    = data.aws_apigatewayv2_api.api_gateway.id
-  route_key = "ANY /{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.eks_integration.id}"
+  route_key = "ANY /customers/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.customers_integration.id}"
 }
