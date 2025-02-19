@@ -23,6 +23,18 @@ data "aws_lb_listener" "payments_listener" {
 }
 
 ############################################
+# NLB and Listener Data Sources for /products
+############################################
+data "aws_lb" "products_nlb" {
+  name = var.products_nlb_name
+}
+
+data "aws_lb_listener" "products_listener" {
+  load_balancer_arn = data.aws_lb.products_nlb.arn
+  port              = 80
+}
+
+############################################
 # NLB and Listener Data Sources for /customers
 ############################################
 
@@ -60,6 +72,15 @@ resource "aws_apigatewayv2_integration" "customers_integration" {
   api_id             = data.aws_apigatewayv2_api.api_gateway.id
   integration_type   = "HTTP_PROXY"
   integration_uri    = data.aws_lb_listener.customers_listener.arn
+  connection_type    = "VPC_LINK"
+  connection_id      = data.aws_apigatewayv2_vpc_link.vpc_link.id
+  integration_method = "ANY"
+}
+
+resource "aws_apigatewayv2_integration" "products_integration" {
+  api_id             = data.aws_apigatewayv2_api.api_gateway.id
+  integration_type   = "HTTP_PROXY"
+  integration_uri    = data.aws_lb_listener.products_listener.arn
   connection_type    = "VPC_LINK"
   connection_id      = data.aws_apigatewayv2_vpc_link.vpc_link.id
   integration_method = "ANY"
@@ -109,25 +130,71 @@ resource "aws_apigatewayv2_authorizer" "lambda_authorizer" {
 # resource "aws_apigatewayv2_route" "eks_route_with_auth" {
 #   api_id             = data.aws_apigatewayv2_api.api_gateway.id
 #   route_key          = "ANY /admin/{proxy+}"
-#   target             = "integrations/${aws_apigatewayv2_integration.eks_integration.id}"
+#   target             = "integrations/${aws_apigatewayv2_integration.products_integration.id}"
 #   authorization_type = "CUSTOM"
 #   authorizer_id      = aws_apigatewayv2_authorizer.lambda_authorizer.id
 # }
 
-# resource "aws_apigatewayv2_route" "docs_proxy_route" {
-#   api_id    = data.aws_apigatewayv2_api.api_gateway.id
-#   route_key = "ANY /{proxy+}"
-#   target    = "integrations/${aws_apigatewayv2_integration.eks_integration.id}"
-# }
 
+############################################
+# PRODUCTS ROUTES
+############################################
+resource "aws_apigatewayv2_route" "products_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /products/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.products_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "products_root_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /products"
+  target    = "integrations/${aws_apigatewayv2_integration.products_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "products_docs_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /products-docs"
+  target    = "integrations/${aws_apigatewayv2_integration.products_integration.id}"
+}
+
+############################################
+# CUSTOMERS ROUTES
+############################################
+resource "aws_apigatewayv2_route" "customers_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /customers/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.customers_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "customers_root_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /customers"
+  target    = "integrations/${aws_apigatewayv2_integration.customers_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "customers_docs_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /customers-docs"
+  target    = "integrations/${aws_apigatewayv2_integration.customers_integration.id}"
+}
+
+############################################
+# PAYMENTS ROUTES
+############################################
 resource "aws_apigatewayv2_route" "payments_route" {
   api_id    = data.aws_apigatewayv2_api.api_gateway.id
   route_key = "ANY /payments/{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.payments_integration.id}"
 }
 
-resource "aws_apigatewayv2_route" "customers_route" {
+resource "aws_apigatewayv2_route" "payments_root_route" {
   api_id    = data.aws_apigatewayv2_api.api_gateway.id
-  route_key = "ANY /customers/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.customers_integration.id}"
+  route_key = "ANY /payments"
+  target    = "integrations/${aws_apigatewayv2_integration.payments_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "payments_docs_route" {
+  api_id    = data.aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /payments-docs"
+  target    = "integrations/${aws_apigatewayv2_integration.payments_integration.id}"
 }
